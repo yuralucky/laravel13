@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Oauth\DiscordController;
+use App\Http\Controllers\Oauth\GithubController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
@@ -17,9 +20,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [PostController::class,'index']);
-Route::get('/author/{author}', [PostController::class,'showPostByAuthor'])->name('show-by-author');
-Route::get('/author/{author}/category/{category}', [PostController::class,'showAllPostByAuthorAndByCategory']);
-Route::get('/author/{author}/category/{category}/tag/{tag}', [PostController::class,'showPostByAuthorAndByCategoryByTag']);
-Route::get('/category/{category}', [PostController::class,'showPostByCategory'])->name('show-by-category');
-Route::get('/tag/{tag}', [PostController::class,'showPostByTag'])->name('show-by-tag');
+Route::get('/', [HomeController::class, 'index'])->name('login-page');
+Route::get('/oauth/github/callback', [GithubController::class, 'index']);
+Route::get('/oauth/discord/callback', [DiscordController::class, 'index']);
+Route::get('/posts', [PostController::class, 'index'])->name('all-posts');
+Route::get('/create', [PostController::class, 'create'])->name('form-post');
+Route::post('/create', [PostController::class, 'store'])->name('store-post');
+

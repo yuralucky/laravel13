@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
@@ -14,40 +15,20 @@ class PostController extends Controller
         return view('posts/index', compact('posts'));
     }
 
-    public function showPostByAuthor($author)
+    public function create()
     {
-        $posts = Post::where('user_id', $author)->paginate(10);
-        return view('posts/index', compact('posts'));
+        return view('posts.form');
     }
 
-    public function showAllPostByAuthorAndByCategory($author, $category)
+    public function store(Request $request)
     {
-        $posts = Post::where('user_id', $author)->where('category_id', $category)->paginate(10);
-        return view('posts/index', compact('posts'));
-
+        $request->validate([
+            'title' => 'required|unique:posts|min:3',
+            'body' => 'required|min:3|max:50'
+        ]);
+        var_dump($request);exit();
+        Post::create($request->all());
+        return redirect()->route('all-posts');
     }
 
-    public function showPostByCategory($author)
-    {
-        $posts = Post::where('category_id', $author)->paginate(10);
-        return view('posts/index', compact('posts'));
-    }
-
-    public function showPostByTag($tag)
-    {
-        $tag = Tag::find($tag);
-        $posts = $tag->posts()->paginate(10);
-        return view('posts/index', compact('posts'));
-    }
-
-    public function showPostByAuthorAndByCategoryByTag($author, $category, $tag)
-    {
-        $posts = Post::where('user_id', $author)
-            ->where('category_id', $category)
-            ->whereHas('tags',function (Builder $query ) use ($tag){
-                $query->where('tags.id',$tag);
-            })
-            ->paginate(10);
-        return view('posts/index', compact('posts'));
-    }
 }
